@@ -25,21 +25,41 @@ import com.watabou.noosa.Game;
 
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.media.SoundPool.Builder;
+import android.os.Build;
 
 public enum Sample implements SoundPool.OnLoadCompleteListener {
-	
-	INSTANCE;
 
-	public static final int MAX_STREAMS = 8;
-	
-	protected SoundPool pool = 
-		new SoundPool( MAX_STREAMS, AudioManager.STREAM_MUSIC, 0 );
-	
-	protected HashMap<Object, Integer> ids = 
+    INSTANCE;
+
+    public static final int MAX_STREAMS = 8;
+
+    @SuppressWarnings("deprecation")
+    protected SoundPool sp () {
+        if (true)
+        {
+            return new SoundPool.Builder()
+                    .setMaxStreams(MAX_STREAMS)
+                    .setAudioAttributes(new AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_GAME)
+                                    .build()
+                    ).build();
+        }
+        else
+        {
+            return new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+        }
+
+    }
+
+    protected SoundPool pool = sp();
+
+	protected HashMap<Object, Integer> ids =
 		new HashMap<Object, Integer>();
-	
+
 	private boolean enabled = true;
 	
 	public void reset() {

@@ -94,7 +94,7 @@ public class Bundle {
 		return new Bundle( data.optJSONObject( key ) );
 	}
 	
-	private Bundlable get() {
+	private Bundleable get() {
 		try {
 			String clName = getString( CLASS_NAME );
 			if (aliases.containsKey( clName )) {
@@ -103,7 +103,7 @@ public class Bundle {
 			
 			Class<?> cl = Class.forName( clName );
 			if (cl != null) {
-				Bundlable object = (Bundlable)cl.newInstance();
+				Bundleable object = (Bundleable)cl.newInstance();
 				object.restoreFromBundle( this );
 				return object;
 			} else {
@@ -115,7 +115,7 @@ public class Bundle {
 		}	
 	}
 	
-	public Bundlable get( String key ) {
+	public Bundleable get( String key ) {
 		return getBundle( key ).get();	
 	}
 	
@@ -168,22 +168,38 @@ public class Bundle {
 			return null;
 		}
 	}
-	
-	public Collection<Bundlable> getCollection( String key ) {
-		
-		ArrayList<Bundlable> list = new ArrayList<Bundlable>();
-		
-		try {
-			JSONArray array = data.getJSONArray( key );
-			for (int i=0; i < array.length(); i++) {
-				list.add( new Bundle( array.getJSONObject( i ) ).get() );
-			}
-		} catch (JSONException e) {
-			
-		}
-		
-		return list;
-	}
+
+    public Collection<Bundleable> getCollection( String key ) {
+
+        ArrayList<Bundleable> list = new ArrayList<Bundleable>();
+
+        try {
+            JSONArray array = data.getJSONArray( key );
+            for (int i=0; i < array.length(); i++) {
+                list.add( new Bundle( array.getJSONObject( i ) ).get() );
+            }
+        } catch (JSONException e) {
+
+        }
+
+        return list;
+    }
+
+    public Collection<?> getIndefCollection( String key ) {
+
+        ArrayList<Bundleable> list = new ArrayList<Bundleable>();
+
+        try {
+            JSONArray array = data.getJSONArray( key );
+            for (int i=0; i < array.length(); i++) {
+                list.add( new Bundle( array.getJSONObject( i ) ).get() );
+            }
+        } catch (JSONException e) {
+
+        }
+
+        return list;
+    }
 	
 	public void put( String key, boolean value ) {
 		try {
@@ -225,7 +241,7 @@ public class Bundle {
 		}
 	}
 	
-	public void put( String key, Bundlable object ) {
+	public void put( String key, Bundleable object ) {
 		if (object != null) {
 			try {
 				Bundle bundle = new Bundle();
@@ -282,9 +298,9 @@ public class Bundle {
 		}
 	}
 	
-	public void put( String key, Collection<? extends Bundlable> collection ) {
+	public void put( String key, Collection<? extends Bundleable> collection ) {
 		JSONArray array = new JSONArray();
-		for (Bundlable object : collection) {
+		for (Bundleable object : collection) {
 			Bundle bundle = new Bundle();
 			bundle.put( CLASS_NAME, object.getClass().getName() );
 			object.storeInBundle( bundle );
